@@ -1,10 +1,16 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+import Header from "./components/Header";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+
 const App = () => {
   return (
     <div>
-      <h4>Hi there!</h4>
+      <Header />
+      <Signup />
+      {/* <Login /> */}
     </div>
   );
 };
