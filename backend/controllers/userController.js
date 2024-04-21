@@ -2,26 +2,31 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const handleError = (res, statusCode, message) => {
+  return res.status(statusCode).json({
+    success: false,
+    message: message,
+  });
+};
+
 exports.signupUser = async (req, res, next) => {
-  const { name, email, phone, gender, password, confirmPassword } = req.body;
+  console.log("hi");
+  const { name, email, phone, gender, password } = req.body;
 
   try {
-    const existUser = await User.findOne({ email: email });
+    const existUser = await User.findOne({ email });
 
     if (existUser) {
-      return res.status(409).json({
-        success: false,
-        message: "Email already registered!",
-      });
+      return handleError(res, 409, "Email already registered!");
     }
 
     const hashPassword = await bcrypt.hash(password, 12);
 
     const user = new User({
-      name: name,
-      email: email,
-      phone: phone,
-      gender: gender,
+      name,
+      email,
+      phone,
+      gender,
       password: hashPassword,
       confirmPassword: hashPassword,
     });
@@ -33,36 +38,25 @@ exports.signupUser = async (req, res, next) => {
       message: "Registered Successfully!",
       data: result,
     });
-    //
   } catch (error) {
     console.log(`Error: ${error}`);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error!",
-    });
+    return handleError(res, 500, "Internal Server Error!");
   }
 };
 
 exports.loginUser = async (req, res, next) => {
-  console.log("Validated signup data!");
   const { email, password } = req.body;
 
   try {
-    const existUser = await User.findOne({ email: email });
+    const existUser = await User.findOne({ email });
 
     if (!existUser) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found. Please register first.",
-      });
+      return handleError(res, 404, "User not found. Please register first.");
     }
 
     const isPasswordValid = await bcrypt.compare(password, existUser.password);
     if (!isPasswordValid) {
-      return res.json({
-        success: false,
-        message: "Wrong Password, Please try again!",
-      });
+      return handleError(res, 401, "Wrong Password, Please try again!");
     }
 
     const tokenObject = {
@@ -78,16 +72,12 @@ exports.loginUser = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Logged in Successfully!",
-      jwToken: jwToken,
-      tokenObject: tokenObject,
+      jwToken,
+      tokenObject,
     });
-    //
   } catch (error) {
     console.log(`Error: ${error}`);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error!",
-    });
+    return handleError(res, 500, "Internal Server Error!");
   }
 };
 
@@ -100,13 +90,9 @@ exports.getUsers = async (req, res, next) => {
       message: "Fetched all the registered users.",
       data: users,
     });
-    //
   } catch (error) {
     console.log(`Error: ${error}`);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error!",
-    });
+    return handleError(res, 500, "Internal Server Error!");
   }
 };
 
@@ -116,18 +102,18 @@ exports.getUser = async (req, res, next) => {
   try {
     const user = await User.findById(userId);
 
+    if (!user) {
+      return handleError(res, 404, "User not found.");
+    }
+
     return res.status(200).json({
       success: true,
-      message: "Fetched your profile info.",
+      message: "Fetched user profile.",
       data: user,
     });
-    //
   } catch (error) {
     console.log(`Error: ${error}`);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error!",
-    });
+    return handleError(res, 500, "Internal Server Error!");
   }
 };
 
@@ -136,35 +122,32 @@ exports.updateUser = async (req, res, next) => {
   const { name, email, phone, gender } = req.body;
 
   if (!name || !email || !phone || !gender) {
-    return res.status(403).json({
-      success: false,
-      message:
-        "Name, Email, Phone, Gender is required to update the user details.",
-    });
+    return handleError(
+      res,
+      400,
+      "Name, Email, Phone, Gender are required fields."
+    );
   }
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { name, email, phone, gender },
+      { new: true }
+    );
 
-    user.name = name;
-    user.email = email;
-    user.phone = phone;
-    user.gender = gender;
-
-    const updatedUser = await user.save();
+    if (!user) {
+      return handleError(res, 404, "User not found.");
+    }
 
     return res.status(200).json({
       success: true,
-      message: "User got update",
-      data: updatedUser,
+      message: "User updated successfully.",
+      data: user,
     });
-    //
   } catch (error) {
     console.log(`Error: ${error}`);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error!",
-    });
+    return handleError(res, 500, "Internal Server Error!");
   }
 };
 
@@ -172,19 +155,19 @@ exports.deleteUser = async (req, res, next) => {
   const userId = req.params.userId;
 
   try {
-    const deleteUser = await User.findByIdAndDelete(userId);
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return handleError(res, 404, "User not found.");
+    }
 
     return res.status(200).json({
       success: true,
-      message: `${deleteUser.name}! You've deleted your profile!`,
-      data: deleteUser,
+      message: "User deleted successfully.",
+      data: deletedUser,
     });
-    //
   } catch (error) {
     console.log(`Error: ${error}`);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error!",
-    });
+    return handleError(res, 500, "Internal Server Error!");
   }
 };
