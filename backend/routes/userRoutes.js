@@ -15,11 +15,13 @@ const {
   validateLoginData,
 } = require("../utils/userValidation");
 
-router.get("/api/users", getUsers);
+const { ensureAuth } = require("../utils/userAuth");
+
+router.get("/api/users", ensureAuth, getUsers);
 router.post("/api/signup", validateSignupData, signupUser);
 router.post("/api/login", validateLoginData, loginUser);
-router.route("/api/user/:userId").get(getUser);
-router.route("/api/user/:userId").put(updateUser);
-router.route("/api/user/:userId").delete(deleteUser);
+router.get("/api/user/:userId", ensureAuth, getUser);
+router.put("/api/user/:userId", ensureAuth, updateUser);
+router.delete("/api/user/:userId", ensureAuth, deleteUser);
 
 module.exports = router;
