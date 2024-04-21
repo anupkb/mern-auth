@@ -13,33 +13,33 @@ const userSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
       trim: true,
     },
     gender: {
       type: String,
       required: true,
-      enum: ["Male", "Female", "Ohter"],
+      enum: ["Male", "Female", "Other"],
     },
     password: {
       type: String,
       required: true,
       minlength: 6,
-      // maxlength: 12,
     },
     confirmPassword: {
       type: String,
       required: true,
       minlength: 6,
-      // maxlenght: 12,
       validate: {
         validator: function (value) {
           return value === this.password;
         },
-        message: "Password & Confirm Password do not match!",
+        message:
+          "Passwords do not match. Please ensure both passwords are identical.",
       },
     },
   },

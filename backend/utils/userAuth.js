@@ -1,25 +1,31 @@
 const jwt = require("jsonwebtoken");
 
-exports.ensureAuth = async (req, res, next) => {
-  const jwToken = await req.headers["authorization"];
+exports.ensureAuth = (req, res, next) => {
+  const jwToken = req.headers["authorization"];
 
   if (!jwToken) {
-    return res.status(403).json({
+    return res.status(401).json({
       success: false,
-      message: "Token is required!",
+      message: "Token is required for authentication.",
     });
   }
 
   try {
-    jwt.verify(jwToken, process.env.JWT_SECRET_KEY);
+    const decode = jwt.verify(jwToken, process.env.JWT_SECRET_KEY);
+    req.user = decode;
     next();
-    //
   } catch (error) {
-    console.log(`Error: ${error}`);
-
-    return res.status(403).json({
-      success: false,
-      message: "Invalid token or expired!",
-    });
+    console.error("JWT verification error:", error);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Token has expired. Please log in again.",
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token. Please provide a valid token.",
+      });
+    }
   }
 };
