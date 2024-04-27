@@ -25,9 +25,9 @@ const Signup = () => {
         "http://localhost:3000/api/signup",
         formData
       );
-      console.log(response.data);
+      console.log(response);
     } catch (error) {
-      console.error("Signup failed:", error.response.data);
+      console.error("Signup failed:", error);
     }
   };
 
