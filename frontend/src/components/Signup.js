@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -16,10 +17,18 @@ const Signup = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your signup logic here
-    console.log(formData);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/signup",
+        formData
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Signup failed:", error.response.data);
+    }
   };
 
   return (
@@ -80,8 +89,9 @@ const Signup = () => {
               className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             >
               <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <div>
