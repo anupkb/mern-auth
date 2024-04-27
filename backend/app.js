@@ -7,6 +7,14 @@ const dotenv = require("dotenv").config();
 const port = process.env.PORT || 3001;
 const mongo_uri = process.env.MONGOOSE_URI;
 
+const allowCors = (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:1234");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  next();
+};
+
+app.use(allowCors);
 const router = require("./routes/userRoutes");
 app.use(express.json());
 app.use(router);
