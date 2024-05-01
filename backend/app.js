@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cookieParser = require("cookie-parser");
 
 const connectDB = require("./db/connect");
 
@@ -11,9 +12,11 @@ const allowCors = (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:1234");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Credentials", true);
   next();
 };
 
+app.use(cookieParser());
 app.use(allowCors);
 const router = require("./routes/userRoutes");
 app.use(express.json());

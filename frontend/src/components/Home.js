@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
 const Home = () => {
   const [userData, setUserData] = useState([]);
@@ -11,10 +12,7 @@ const Home = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/users", {
-        headers: {
-          Authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjJkM2ZmMGQ4YmE0ZGMyNzQwOTdiNGEiLCJuYW1lIjoiU2FsbWFuIEtoYW4iLCJlbWFpbCI6ImJlaW5naHVtYW5AYm9sbHl3b29kLmNvbSIsImlhdCI6MTcxNDI0Mjc2MSwiZXhwIjoxNzE0MjQ2MzYxfQ.3XN4EAm6T1f9Omy3cYQHP64pHM8_ITlWdawYfmWaqCs",
-        },
+        withCredentials: true,
       });
       console.log(response);
       setUserData(response.data.data);

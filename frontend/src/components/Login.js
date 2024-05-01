@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -11,10 +15,20 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log(formData);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/login",
+        formData
+      );
+      //
+      userInfo = response.data.tokenObject;
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(`Login failed!: ${error}`);
+    }
   };
 
   return (

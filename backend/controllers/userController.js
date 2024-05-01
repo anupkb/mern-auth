@@ -66,15 +66,29 @@ exports.loginUser = async (req, res, next) => {
     };
 
     const jwToken = jwt.sign(tokenObject, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "50s",
     });
 
-    return res.status(200).json({
+    // Set Cookies
+    const options = {
+      // expiresIn: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      expiresIn: new Date(Date.now() + 1000 * 50),
+      httpOnly: true,
+      sameSite: "lax",
+    };
+
+    return res.cookie("token", jwToken, options).json({
       success: true,
       message: "Logged in Successfully!",
-      jwToken,
       tokenObject,
     });
+
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Logged in Successfully!",
+    //   jwToken,
+    //   tokenObject,
+    // });
   } catch (error) {
     console.log(`Error: ${error}`);
     return handleError(res, 500, "Internal Server Error!");

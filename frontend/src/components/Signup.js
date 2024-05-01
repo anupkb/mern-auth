@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,7 +28,8 @@ const Signup = () => {
         "http://localhost:3000/api/signup",
         formData
       );
-      console.log(response);
+      // console.log(response);
+      navigate("/login");
     } catch (error) {
       console.error("Signup failed:", error);
     }
