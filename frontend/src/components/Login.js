@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/userContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -25,6 +27,7 @@ const Login = () => {
       );
       //
       userInfo = response.data.tokenObject;
+      setUser(userInfo);
       navigate("/dashboard");
     } catch (error) {
       console.error(`Login failed!: ${error}`);

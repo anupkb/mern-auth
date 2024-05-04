@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { UserProvider } from "./contexts/userContext";
 
 import Header from "./components/Header";
 import Home from "./components/Home";
@@ -10,10 +11,12 @@ import Dashboard from "./components/Dashboard";
 
 const App = () => {
   return (
-    <div>
-      <Header />
-      <Outlet />
-    </div>
+    <UserProvider>
+      <div>
+        <Header />
+        <Outlet />
+      </div>
+    </UserProvider>
   );
 };
 
