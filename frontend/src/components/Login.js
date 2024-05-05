@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/userContext";
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -76,6 +76,12 @@ const Login = () => {
             >
               Login
             </button>
+          </div>
+          <div className="text-sm text-center">
+            New user{" "}
+            <Link to="/signup" className="underline text-blue-700">
+              Register
+            </Link>
           </div>
         </form>
       </div>

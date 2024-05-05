@@ -1,21 +1,26 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useUser } from "../contexts/userContext";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
-const Signup = () => {
+function Update() {
+  const { user } = useUser();
+  const userId = user._id;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     gender: "",
-    password: "",
-    confirmPassword: "",
   });
 
   const handleChange = (e) => {
-    console.log(e.target);
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -24,14 +29,31 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/signup",
-        formData
+      const response = await axios.put(
+        `http://localhost:3000/api/user/${userId}`,
+        formData,
+        { withCredentialstrue: true }
       );
-      // console.log(response);
-      navigate("/login");
+
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error(`Error in updating data: ${error}`);
+    }
+    console.log(formData);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/user/${userId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      setFormData(response.data.data);
+    } catch (error) {
+      console.error(`Error in fetching data: ${error}`);
     }
   };
 
@@ -40,7 +62,7 @@ const Signup = () => {
       <div className="max-w-md w-full space-y-8 rounded-lg p-5 bg-white shadow-md">
         <div>
           <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-500 underline">
-            Register
+            Update
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -99,49 +121,17 @@ const Signup = () => {
             </select>
           </div>
           <div>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              autoComplete="new-password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Password"
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              name="confirmPassword"
-              id="confirmPassword"
-              autoComplete="new-password"
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Confirm Password"
-            />
-          </div>
-          <div>
             <button
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Sign up
+              Update
             </button>
-          </div>
-          <div className="text-sm text-center">
-            Registered user{" "}
-            <Link to="/login" className="underline text-blue-700">
-              Login
-            </Link>
           </div>
         </form>
       </div>
     </div>
   );
-};
+}
 
-export default Signup;
+export default Update;

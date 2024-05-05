@@ -8,6 +8,7 @@ import Home from "./components/Home";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import Update from "./components/Update";
 
 const App = () => {
   return (
@@ -40,6 +41,10 @@ const appRouter = createBrowserRouter([
       {
         path: "dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "update",
+        element: <Update />,
       },
     ],
   },
